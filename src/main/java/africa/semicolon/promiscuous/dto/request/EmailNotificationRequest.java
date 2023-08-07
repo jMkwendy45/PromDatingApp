@@ -1,5 +1,6 @@
 package africa.semicolon.promiscuous.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,10 +13,13 @@ import java.util.List;
 @NoArgsConstructor
 public class EmailNotificationRequest {
     private Sender sender;
+    @JsonProperty("to")
     private List<Recipients> recipients;
-    private    List<String>copiedEmails;
+    @JsonProperty("cc")
+    private List<String>copiedEmails;
     private String TextContents;
     private String subject;
+    @JsonProperty("htmlContent")
     private String mailContents;
 
 }

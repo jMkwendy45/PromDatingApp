@@ -30,15 +30,16 @@ public class MailServiceTest {
         recipients.add(recepitent);
 
 
-        Sender sender = new Sender();
-        sender.setEmail(mailSender);
+        Sender sender1 = new Sender();
+        sender1.setEmail(mailSender);
 
 
         EmailNotificationRequest request = new EmailNotificationRequest();
+        request.setMailContents(message);
+        request.setRecipients(recipients);
         request.setSubject(subject);
-        request.setSender(mailSender);
-        request.setRecipients();
-        request.setTextContents();
+        request.setSender(sender1);
+
       EmailNotificationResponse emailNotificationResponse = mailService.send(request);
 
       assertNotNull(emailNotificationResponse);
