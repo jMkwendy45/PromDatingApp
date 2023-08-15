@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Setter
 @Getter
@@ -23,11 +25,21 @@ public class User {
     @Column(nullable = false)
     private  String password;
     private LocalDate dateOfBirth;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     private Address address;
     @Enumerated(EnumType.STRING)
     private  Gender gender;
 
     @Enumerated(EnumType.STRING)
     private  Role role;
+
+    private boolean isActive;
+
+    private LocalDateTime createdAt;
+
+
+    @PrePersist
+    public void setCreatedAt(){
+        createdAt = LocalDateTime.now();
+    }
 }

@@ -19,29 +19,31 @@ public class MailServiceTest {
     MailService mailService;
     @Test
     public void testThatEmailSendingWorks(){
-        String emailRecipients = "xiteha3228@inkiny.com";
+        EmailNotificationRequest request = getEmailNotificationRequest();
+        EmailNotificationResponse emailNotificationResponse = mailService.send(request);
+      assertNotNull(emailNotificationResponse);
+    }
+
+    private static EmailNotificationRequest getEmailNotificationRequest() {
+        String emailRecipients = "jobaw17207@touchend.com";
         String message ="testing our mail service";
-         String mailSender ="noreply@promisicus.com";
-         String subject="test email";
+        String subject="test email";
 
         Recipients recepitent = new Recipients();
-        recepitent.setRecipientEmail(emailRecipients);
+        recepitent.setEmail(emailRecipients);
         List<Recipients>recipients = new ArrayList<>();
         recipients.add(recepitent);
 
 
-        Sender sender1 = new Sender();
-        sender1.setEmail(mailSender);
+//        Sender sender1 = new Sender();
+
 
 
         EmailNotificationRequest request = new EmailNotificationRequest();
         request.setMailContents(message);
         request.setRecipients(recipients);
         request.setSubject(subject);
-        request.setSender(sender1);
 
-      EmailNotificationResponse emailNotificationResponse = mailService.send(request);
-
-      assertNotNull(emailNotificationResponse);
+        return request;
     }
 }
