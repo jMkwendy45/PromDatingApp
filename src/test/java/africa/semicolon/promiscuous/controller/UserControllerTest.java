@@ -49,13 +49,6 @@ public class UserControllerTest {
 
 
 
-//    @Test
-//    public  void getUserById(){
-//        try{
-//            GetUserResponse getUserResponse = new GetUserResponse()
-//
-//        }
-//    }
 
 
 

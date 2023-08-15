@@ -15,6 +15,8 @@ public interface UserService {
     ApiResponse<?> activateUserAccount(String token);
     GetUserResponse getUserId(Long id);
 
+    void deleteAll();
+
     List<GetUserResponse> getAllUsers(int page, int pageSize);
 
 }

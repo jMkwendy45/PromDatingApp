@@ -80,6 +80,10 @@ public class PromiscusUserService implements UserService{
         GetUserResponse getUserResponse = buildGetUserResponse(user);
         return getUserResponse;
     }
+    @Override
+    public void deleteAll() {
+        userRepository.deleteAll();
+    }
 
     @Override
     public List<GetUserResponse> getAllUsers(int page, int pageSize) {
