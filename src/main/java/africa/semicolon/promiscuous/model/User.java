@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Setter
@@ -29,17 +30,14 @@ public class User {
     private Address address;
     @Enumerated(EnumType.STRING)
     private  Gender gender;
-
     @Enumerated(EnumType.STRING)
     private  Role role;
-
     private boolean isActive;
-
-    private LocalDateTime createdAt;
-
-
+    private String createdAt;
     @PrePersist
     public void setCreatedAt(){
-        createdAt = LocalDateTime.now();
+        var currentTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        createdAt = currentTime.format(formatter);
     }
 }
