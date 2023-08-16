@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
+import com.github.fge.jackson.jsonpointer.JsonPointerException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.github.fge.jsonpatch.ReplaceOperation;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static africa.semicolon.promiscuous.enums.ExceptionMessage.*;
 import static africa.semicolon.promiscuous.utils.AppUtils.*;
@@ -161,17 +163,16 @@ public class PromiscusUserService implements UserService{
 
     private JsonPatch buildUpdatePatch(UpdateRequest updateRequest) {
       Field [] fields = updateRequest.getClass().getDeclaredFields();
+
         Arrays.stream(fields)
                 .filter(field -> field!=null)
-                .map(field -> new ReplaceOperation(new JsonPointer(field.getName()),new TextNode(field.)))
-        try {
-            List<JsonPatch> operation = List.of(
-                    new ReplaceOperation(new JsonPointer())
-            )
-        }
+                .toList()
 
+        try{
+            JsonPatch patch = new JsonPatch(operations)
+        } catch (JsonPointerException exception){
 
-    }
+      }
 
 //    }
 
