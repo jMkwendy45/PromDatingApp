@@ -18,6 +18,7 @@ import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jackson.jsonpointer.JsonPointerException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import com.github.fge.jsonpatch.JsonPatchOperation;
 import com.github.fge.jsonpatch.ReplaceOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -164,9 +165,28 @@ public class PromiscusUserService implements UserService{
     private JsonPatch buildUpdatePatch(UpdateRequest updateRequest) {
       Field [] fields = updateRequest.getClass().getDeclaredFields();
 
-        Arrays.stream(fields)
+    List<Field>fieldToUpdate =    Arrays.stream(fields)
                 .filter(field -> field!=null)
-                .toList()
+                .toList();
+
+    List<JsonPatchOperation>operations = new ArrayList<>();
+       fieldToUpdate.forEach(field -> {
+           try{
+               String path ="/"+field.getName();
+               JsonPointer pointer = new JsonPointer(path);
+               String value = field.get(field.getName().toString());
+               TextNode node = new TextNode(value);
+               ReplaceOperation operation = new ReplaceOperation(pointer,node);
+               operations.add(operation);
+
+
+           }
+
+
+        ("/"+field.getName());
+
+       }
+    });
 
         try{
             JsonPatch patch = new JsonPatch(operations)
