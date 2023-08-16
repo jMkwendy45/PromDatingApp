@@ -5,6 +5,7 @@ import africa.semicolon.promiscuous.dto.request.LoginRequest;
 import africa.semicolon.promiscuous.dto.request.RegisterUserRequest;
 import africa.semicolon.promiscuous.dto.request.UpdateRequest;
 import africa.semicolon.promiscuous.model.User;
+import com.github.fge.jsonpatch.JsonPatch;
 
 import java.util.List;
 
@@ -21,7 +22,8 @@ public interface UserService {
 
     List<GetUserResponse> getAllUsers(int page, int pageSize);
 
-   UpdateResponse updateProfile (UpdateRequest updateRequest,Long id);
+    UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id);
+   UpdateResponse updateUserProfile (JsonPatch jsonPatch, Long id);
 
 
 }

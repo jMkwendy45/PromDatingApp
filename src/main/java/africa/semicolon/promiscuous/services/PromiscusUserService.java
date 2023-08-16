@@ -130,7 +130,14 @@ public class PromiscusUserService implements UserService{
 //                .toList();
 
     }
+    @Override
+    public UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id) {
+        User user = findUserById(id);
 
+        return null;
+    }
+
+    @Override
     public UpdateResponse updateUserProfile(JsonPatch jsonPatch, Long id) {
         ObjectMapper mapper = new ObjectMapper();
         User user = findUserById(id);
@@ -147,6 +154,8 @@ public class PromiscusUserService implements UserService{
             throw new PromiscuousException(":(");
         }
     }
+
+
 //    private JsonPatch buildUpdatePatch(UpdateRequest updateRequest) {
 //        try{
 //            List<JsonPatch>operation = List.of(
@@ -159,8 +168,9 @@ public class PromiscusUserService implements UserService{
 //    }
 
     private User findUserById( Long id) {
-        Optional<User>foundUser = userRepository.findById(id);
-        return  foundUser.stream().map(user -> (user)).toList();
+        Optional<User> foundUser = userRepository.findById(id);
+        User user = foundUser.orElseThrow(()-> new UserNotFoundException(USER_NOT_FOUND_EXCEPTION.getMessage()));
+        return user;
 
     }
 
