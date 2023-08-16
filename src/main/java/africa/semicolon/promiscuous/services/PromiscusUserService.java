@@ -3,10 +3,12 @@ package africa.semicolon.promiscuous.services;
 import africa.semicolon.promiscuous.config.AppConfig;
 import africa.semicolon.promiscuous.dto.reponse.*;
 import africa.semicolon.promiscuous.dto.request.EmailNotificationRequest;
+import africa.semicolon.promiscuous.dto.request.LoginRequest;
 import africa.semicolon.promiscuous.dto.request.Recipients;
 import africa.semicolon.promiscuous.dto.request.RegisterUserRequest;
 import africa.semicolon.promiscuous.enums.ExceptionMessage;
 import africa.semicolon.promiscuous.exception.AccountActivationFailedException;
+import africa.semicolon.promiscuous.exception.InvalidCredentialException;
 import africa.semicolon.promiscuous.exception.PromiscuousException;
 import africa.semicolon.promiscuous.exception.UserNotFoundException;
 import africa.semicolon.promiscuous.model.Address;
@@ -25,10 +27,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static africa.semicolon.promiscuous.enums.ExceptionMessage.USER_NOT_FOUND_EXCEPTION;
+import static africa.semicolon.promiscuous.enums.ExceptionMessage.*;
 import static africa.semicolon.promiscuous.utils.AppUtils.*;
-import static africa.semicolon.promiscuous.utils.JwtUtils.extractEmailFrom;
-import static africa.semicolon.promiscuous.utils.JwtUtils.validateToken;
+import static africa.semicolon.promiscuous.utils.JwtUtils.*;
 
 @Service
 @RequiredArgsConstructor
@@ -83,6 +84,28 @@ public class PromiscusUserService implements UserService{
     @Override
     public void deleteAll() {
         userRepository.deleteAll();
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) {
+        String email = loginRequest.getEmail();
+        String password =loginRequest.getPassword();
+
+
+        Optional<User>foundUser = userRepository.readByEmail(email);
+        User user = foundUser.orElseThrow(()->new UserNotFoundException(
+                String.format(USER_WITH_EMAIL_NOT_FOUND_EXCEPTION.getMessage(),email)
+        ));
+        boolean isValidPassword = matches(user.getPassword(),password);
+        if (isValidPassword) return buildLoginResponse(email);
+        throw  new InvalidCredentialException(INVALID_CREDENTIAL_EXCEPTION.getMessage());
+    }
+
+    private static LoginResponse buildLoginResponse(String email) {
+        String accessToken = generateToken(email);
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setAccessToken(accessToken);
+        return loginResponse;
     }
 
     @Override

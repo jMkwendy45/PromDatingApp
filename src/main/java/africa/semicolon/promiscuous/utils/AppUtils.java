@@ -57,6 +57,16 @@ public class AppUtils {
 
 
     }
+
+    public static boolean matches(String first,String second){
+        return first.equals(second);
+    }
+
+
+
+
+
+
 //    public static boolean validateToken(String token){
 //        JWTVerifier verifier = JWT.require(Algorithm.HMAC512("secret"))
 //                .withIssuer(APP_NAME)

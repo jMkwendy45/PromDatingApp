@@ -1,9 +1,7 @@
 package africa.semicolon.promiscuous.services;
 
-import africa.semicolon.promiscuous.dto.reponse.ActivateAccountResponse;
-import africa.semicolon.promiscuous.dto.reponse.ApiResponse;
-import africa.semicolon.promiscuous.dto.reponse.GetUserResponse;
-import africa.semicolon.promiscuous.dto.reponse.RegisterUserResponse;
+import africa.semicolon.promiscuous.dto.reponse.*;
+import africa.semicolon.promiscuous.dto.request.LoginRequest;
 import africa.semicolon.promiscuous.dto.request.RegisterUserRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,32 +65,20 @@ public class UserServiceTest {
         assertThat(users).isNotNull();
         assertThat(users.size()).isEqualTo(5);
     }
-//    private void registerTestUsers() {
-//        RegisterUserRequest firstRequest = new RegisterUserRequest();
-//        firstRequest.setEmail("john@gmail.com");
-//        firstRequest.setPassword("password");
-//        userService.register(firstRequest);
-//
-//        firstRequest.setEmail("jane@gmail.com");
-//        firstRequest.setPassword("password");
-//        userService.register(firstRequest);
-//
-//        firstRequest.setEmail("jerry@gmail.com");
-//        firstRequest.setPassword("password");
-//        userService.register(firstRequest);
-//
-//        firstRequest.setEmail("johnny@gmail.com");
-//        firstRequest.setPassword("password");
-//        userService.register(firstRequest);
-//
-//        firstRequest.setEmail("jeoy@gmail.com");
-//        firstRequest.setPassword("password");
-//        userService.register(firstRequest);
-//
-//        firstRequest.setEmail("zaza@gmail.com");
-//        firstRequest.setPassword("password");
-//        userService.register(firstRequest);
-//
-//
-//    }
+ @Test
+ public void testTHatUsersCanLogin(){
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail("test@email.com");
+        loginRequest.setPassword("password");
+
+
+        LoginResponse response =userService.login(loginRequest);
+        assertThat(response).isNotNull();
+
+        String accessToken =response.getAccessToken();
+        assertThat(accessToken).isNotNull();
+
+
+ }
+
 }

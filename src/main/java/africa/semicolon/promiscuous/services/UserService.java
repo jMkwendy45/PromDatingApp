@@ -1,9 +1,7 @@
 package africa.semicolon.promiscuous.services;
 
-import africa.semicolon.promiscuous.dto.reponse.ActivateAccountResponse;
-import africa.semicolon.promiscuous.dto.reponse.ApiResponse;
-import africa.semicolon.promiscuous.dto.reponse.GetUserResponse;
-import africa.semicolon.promiscuous.dto.reponse.RegisterUserResponse;
+import africa.semicolon.promiscuous.dto.reponse.*;
+import africa.semicolon.promiscuous.dto.request.LoginRequest;
 import africa.semicolon.promiscuous.dto.request.RegisterUserRequest;
 import africa.semicolon.promiscuous.model.User;
 
@@ -17,6 +15,11 @@ public interface UserService {
 
     void deleteAll();
 
+   LoginResponse login(LoginRequest loginRequest );
+
     List<GetUserResponse> getAllUsers(int page, int pageSize);
+
+
+
 
 }
