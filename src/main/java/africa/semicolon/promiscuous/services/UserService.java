@@ -23,7 +23,7 @@ public interface UserService {
     List<GetUserResponse> getAllUsers(int page, int pageSize);
 
     UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id);
-   UpdateResponse updateUserProfile (JsonPatch jsonPatch, Long id);
+//   UpdateResponse updateUserProfile (JsonPatch jsonPatch, Long id);
 
 
 }

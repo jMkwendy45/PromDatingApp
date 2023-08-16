@@ -13,6 +13,7 @@ import africa.semicolon.promiscuous.model.User;
 import africa.semicolon.promiscuous.repositories.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
@@ -24,7 +25,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -137,34 +140,39 @@ public class PromiscusUserService implements UserService{
         return null;
     }
 
-    @Override
-    public UpdateResponse updateUserProfile(JsonPatch jsonPatch, Long id) {
-        ObjectMapper mapper = new ObjectMapper();
-        User user = findUserById(id);
-        JsonNode node = mapper.convertValue(user, JsonNode.class);
-        try {
-            JsonNode updateNode = jsonPatch.apply(node);
-            User updateUser = mapper.convertValue(updateNode, User.class);
-            userRepository.save(updateUser);
+//    @Override
+//    public UpdateResponse updateUserProfile(JsonPatch jsonPatch, Long id) {
+//        ObjectMapper mapper = new ObjectMapper();
+//        User user = findUserById(id);
+//        JsonNode node = mapper.convertValue(user, JsonNode.class);
+//        try {
+//            JsonNode updateNode = jsonPatch.apply(node);
+//            User updateUser = mapper.convertValue(updateNode, User.class);
+//            userRepository.save(updateUser);
+//
+//            UpdateResponse response = new UpdateResponse();
+//            response.setMessage("update sucessfull");
+//            return response;
+//        } catch (JsonPatchException exception) {
+//            throw new PromiscuousException(":(");
+//        }
+//    }
 
-            UpdateResponse response = new UpdateResponse();
-            response.setMessage("update sucessfull");
-            return response;
-        } catch (JsonPatchException exception) {
-            throw new PromiscuousException(":(");
+
+    private JsonPatch buildUpdatePatch(UpdateRequest updateRequest) {
+      Field [] fields = updateRequest.getClass().getDeclaredFields();
+        Arrays.stream(fields)
+                .filter(field -> field!=null)
+                .map(field -> new ReplaceOperation(new JsonPointer(field.getName()),new TextNode(field.)))
+        try {
+            List<JsonPatch> operation = List.of(
+                    new ReplaceOperation(new JsonPointer())
+            )
         }
+
+
     }
 
-
-//    private JsonPatch buildUpdatePatch(UpdateRequest updateRequest) {
-//        try{
-//            List<JsonPatch>operation = List.of(
-//                    new ReplaceOperation(new JsonPointer())
-//            )
-//        }
-//
-//
-//
 //    }
 
     private User findUserById( Long id) {
