@@ -3,16 +3,33 @@ package africa.semicolon.promiscuous.services;
 import africa.semicolon.promiscuous.dto.reponse.*;
 import africa.semicolon.promiscuous.dto.request.LoginRequest;
 import africa.semicolon.promiscuous.dto.request.RegisterUserRequest;
-import org.junit.jupiter.api.BeforeEach;
+import africa.semicolon.promiscuous.dto.request.UpdateRequest;
+import africa.semicolon.promiscuous.exception.BadCredentialException;
+import africa.semicolon.promiscuous.exception.PromiscuousException;
+import ch.qos.logback.core.pattern.color.BlackCompositeConverter;
+import org.hibernate.sql.Update;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
+import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static africa.semicolon.promiscuous.utils.AppUtils.BLANK_SPACE;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Sql(scripts = {"/db/insert.sql"})
@@ -34,10 +51,10 @@ public class UserServiceTest {
 
     @Test
     public void testThatUserCanRegister() {
-         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
         registerUserRequest.setEmail("xogov39629@vreaa.com");
         registerUserRequest.setPassword("password");
-       var registerUserResponse = userService.register(registerUserRequest);
+        var registerUserResponse = userService.register(registerUserRequest);
         assertNotNull(registerUserResponse);
         assertNotNull(registerUserResponse.getMessage());
     }
@@ -51,6 +68,7 @@ public class UserServiceTest {
         ApiResponse<?> activateUserAccountResponse = userService.activateUserAccount("abc1234.erytuuoi.67t75646");
         assertThat(activateUserAccountResponse).isNotNull();
     }
+
     @Test
     public void getUserByIdTest() {
 //        userService.register(registerUserRequest);
@@ -58,6 +76,7 @@ public class UserServiceTest {
         assertThat(response).isNotNull();
 //        assertThat(response.getEmail()).isEqualTo(registerUserRequest.getEmail());
     }
+
     @Test
     public void getAllUsers() {
 //        registerTestUsers();
@@ -65,20 +84,77 @@ public class UserServiceTest {
         assertThat(users).isNotNull();
         assertThat(users.size()).isEqualTo(5);
     }
- @Test
- public void testTHatUsersCanLogin(){
+
+    @Test
+    public void testTHatUsersCanLogin() {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test@email.com");
         loginRequest.setPassword("password");
 
 
-        LoginResponse response =userService.login(loginRequest);
+        LoginResponse response = userService.login(loginRequest);
         assertThat(response).isNotNull();
 
-        String accessToken =response.getAccessToken();
+        String accessToken = response.getAccessToken();
         assertThat(accessToken).isNotNull();
 
 
- }
+    }
 
+    @Test
+    public void testThateExceptionIsThrown() {
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail("test@email.com");
+        loginRequest.setPassword("bad_sword");
+
+
+        assertThatThrownBy(() -> userService.login(loginRequest))
+                .isInstanceOf(BadCredentialException.class);
+
+
+    }
+
+    @Test
+    public void testThatUserCanUpdatePassword() {
+        Set<String>interests = Set.of("Swimming","Sports","Cooking");
+
+
+        UpdateRequest updateRequest = new UpdateRequest();
+        updateRequest.setDateOfBirth(String.valueOf(LocalDate.of(2005, Month.AUGUST.ordinal(), 7)));
+        updateRequest.setFirstName("shefiff");
+        updateRequest.setLastName("Awof");
+        updateRequest.setId(500L);
+      MultipartFile testImage=  getTestImage();
+        updateRequest.setProfileImage(testImage);
+        updateRequest.setInterest(interests);
+      UpdateResponse response = userService.updateProfile(updateRequest);
+      assertThat(response).isNotNull();
+
+      GetUserResponse userResponse = userService.getUserId(500L);
+
+      String fullName = userResponse.getFullName();
+      String expectedFullName = new StringBuilder().append(updateRequest.getFirstName())
+                      .append(BLANK_SPACE)
+                              .append(updateRequest.getLastName())
+                                      .toString();
+
+      assertThat(fullName);
+
+      assertThat(fullName).isEqualTo(expectedFullName);
+
+    }
+
+    private MultipartFile getTestImage() {
+        //obatin a part that points to
+        Path path = Paths.get("C:\\Users\\USER\\IdeaProjects\\SpringProjects\\promiscuous\\src\\test\\java\\africa\\semicolon\\promiscuous\\resources\\images\\2.jpg");
+        //create streams that caan read from files pointed to by path
+        try (InputStream inputStream = Files.newInputStream(path)) {
+            //create a multipartfile using bytes from file pointed to by path
+            MultipartFile image = new MockMultipartFile("test_image", inputStream);
+            return image;
+        } catch (Exception exception) {
+            throw new PromiscuousException(exception.getMessage());
+        }
+
+    }
 }

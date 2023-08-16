@@ -2,19 +2,21 @@ package africa.semicolon.promiscuous.services;
 
 import africa.semicolon.promiscuous.config.AppConfig;
 import africa.semicolon.promiscuous.dto.reponse.*;
-import africa.semicolon.promiscuous.dto.request.EmailNotificationRequest;
-import africa.semicolon.promiscuous.dto.request.LoginRequest;
-import africa.semicolon.promiscuous.dto.request.Recipients;
-import africa.semicolon.promiscuous.dto.request.RegisterUserRequest;
+import africa.semicolon.promiscuous.dto.request.*;
 import africa.semicolon.promiscuous.enums.ExceptionMessage;
 import africa.semicolon.promiscuous.exception.AccountActivationFailedException;
-import africa.semicolon.promiscuous.exception.InvalidCredentialException;
+import africa.semicolon.promiscuous.exception.BadCredentialException;
 import africa.semicolon.promiscuous.exception.PromiscuousException;
 import africa.semicolon.promiscuous.exception.UserNotFoundException;
 import africa.semicolon.promiscuous.model.Address;
 import africa.semicolon.promiscuous.model.User;
 import africa.semicolon.promiscuous.repositories.UserRepository;
-import africa.semicolon.promiscuous.utils.AppUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jackson.jsonpointer.JsonPointer;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
+import com.github.fge.jsonpatch.ReplaceOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,7 +27,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.ResourceBundle;
 
 import static africa.semicolon.promiscuous.enums.ExceptionMessage.*;
 import static africa.semicolon.promiscuous.utils.AppUtils.*;
@@ -98,7 +99,7 @@ public class PromiscusUserService implements UserService{
         ));
         boolean isValidPassword = matches(user.getPassword(),password);
         if (isValidPassword) return buildLoginResponse(email);
-        throw  new InvalidCredentialException(INVALID_CREDENTIAL_EXCEPTION.getMessage());
+        throw  new BadCredentialException(INVALID_CREDENTIAL_EXCEPTION.getMessage());
     }
 
     private static LoginResponse buildLoginResponse(String email) {
@@ -127,6 +128,39 @@ public class PromiscusUserService implements UserService{
 //                .map(PromiscuousUserService::buildGetUserResponse)
 //                .map(buildGetUserResponse)
 //                .toList();
+
+    }
+
+    public UpdateResponse updateUserProfile(JsonPatch jsonPatch, Long id) {
+        ObjectMapper mapper = new ObjectMapper();
+        User user = findUserById(id);
+        JsonNode node = mapper.convertValue(user, JsonNode.class);
+        try {
+            JsonNode updateNode = jsonPatch.apply(node);
+            User updateUser = mapper.convertValue(updateNode, User.class);
+            userRepository.save(updateUser);
+
+            UpdateResponse response = new UpdateResponse();
+            response.setMessage("update sucessfull");
+            return response;
+        } catch (JsonPatchException exception) {
+            throw new PromiscuousException(":(");
+        }
+    }
+//    private JsonPatch buildUpdatePatch(UpdateRequest updateRequest) {
+//        try{
+//            List<JsonPatch>operation = List.of(
+//                    new ReplaceOperation(new JsonPointer())
+//            )
+//        }
+//
+//
+//
+//    }
+
+    private User findUserById( Long id) {
+        Optional<User>foundUser = userRepository.findById(id);
+        return  foundUser.stream().map(user -> (user)).toList();
 
     }
 

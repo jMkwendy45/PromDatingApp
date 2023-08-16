@@ -1,15 +1,15 @@
 package africa.semicolon.promiscuous.controllers;
 
+import africa.semicolon.promiscuous.dto.reponse.GetUserResponse;
 import africa.semicolon.promiscuous.dto.reponse.RegisterUserResponse;
+import africa.semicolon.promiscuous.dto.reponse.UpdateResponse;
 import africa.semicolon.promiscuous.dto.request.RegisterUserRequest;
 import africa.semicolon.promiscuous.services.UserService;
+import com.github.fge.jsonpatch.JsonPatch;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
@@ -22,6 +22,20 @@ public class UserController {
         RegisterUserResponse response = userService.register(registerUserRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+    @GetMapping("/{id}")
+    public  ResponseEntity<GetUserResponse>getUserById(@PathVariable Long id){
+        GetUserResponse user =userService.getUserId(id);
+                return ResponseEntity.ok().body(user);
+    }
+    @PostMapping("/{id}")
+    public ResponseEntity<?>updateUserAccount(@RequestBody JsonPatch jsonPatch,@PathVariable Long id){
+        UpdateResponse response = userService.updateProfile(jsonPatch,id);
+                return ResponseEntity.ok(response);
+    }
+
+
+
+
 }
 
 
