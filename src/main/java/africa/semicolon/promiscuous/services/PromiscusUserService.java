@@ -143,8 +143,12 @@ public class PromiscusUserService implements UserService{
         return  applyPatch(updatePatch,user);
     }
 
-    private static Set<Interest>parseInterestFrom(Set<String> interest){
+    private static Set<Interest>parseInterestFrom(Set<String> interests){
+        Set<Interest> userInterests =  interests.stream()
+                .map(interest -> Interest.valueOf(interest.toUpperCase()))
+                .collect(Collectors.toSet());
 
+        return userInterests;
     }
 
     private UpdateResponse applyPatch(JsonPatch updatePatch,User user){
