@@ -16,13 +16,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
-import com.github.fge.jackson.jsonpointer.JsonPointerException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.github.fge.jsonpatch.JsonPatchOperation;
 import com.github.fge.jsonpatch.ReplaceOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +36,6 @@ import static africa.semicolon.promiscuous.dto.reponse.ResponseMessage.PROFILE_U
 import static africa.semicolon.promiscuous.enums.ExceptionMessage.*;
 import static africa.semicolon.promiscuous.utils.AppUtils.*;
 import static africa.semicolon.promiscuous.utils.JwtUtils.*;
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -138,15 +137,18 @@ public class PromiscusUserService implements UserService{
     }
     @Override
     public UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id) {
+        ModelMapper modelMapper = new ModelMapper();
         User user = findUserById(id);
-        Set<String>userInterest = updateUserRequest.getInterest();
-        Set<Interest>interests = parseInterestFrom(userInterest);
-//        user.setInterests();
+        Set<Interest> userInterests = updateUserRequest.getInterests();
+        Set<Interest> interests = parseInterestFrom(userInterests);
+        user.setInterests(interests);
+        Address userAddress = modelMapper.map(updateUserRequest, Address.class);
+        user.setAddress(userAddress);
         JsonPatch updatePatch = buildUpdatePatch(updateUserRequest);
-        return  applyPatch(updatePatch,user);
+        return applyPatch(updatePatch, user);
     }
 
-    private static Set<Interest>parseInterestFrom(Set<String> interests){
+    private static Set<Interest>parseInterestFrom(Set<Interest> interests){
         Set<Interest> userInterests =  interests.stream()
                 .map(interest -> Interest.valueOf(interest.toUpperCase()))
                 .collect(Collectors.toSet());
