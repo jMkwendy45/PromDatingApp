@@ -1,5 +1,6 @@
 package africa.semicolon.promiscuous.dto.request;
 
+import africa.semicolon.promiscuous.enums.Interest;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,4 +25,6 @@ public class UpdateRequest {
     private String street;
     private String state;
     private String country;
+    private Set<Interest> interests;
+
 }

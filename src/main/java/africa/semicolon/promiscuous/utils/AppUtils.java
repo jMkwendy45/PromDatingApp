@@ -28,6 +28,7 @@ public class AppUtils {
 
     private static final String MAIL_TEMPLATE_LOCATION= "C:\\\\Users\\\\USER\\\\IdeaProjects\\\\SpringProjects\\\\promiscuous\\\\src\\\\main\\\\resources\\\\templates\\\\index.html";
     private static final String ACTIVATE_ACCOUNT_PATH = "/user/activate?code=";
+    public static final String JSON_PATCH_PATH_PREFIX = "/";
 
     public static  String generateActivationLink( String baseUrl,String email){
         String token = generateToken(email);

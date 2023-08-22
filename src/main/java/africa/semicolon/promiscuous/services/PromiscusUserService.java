@@ -4,6 +4,7 @@ import africa.semicolon.promiscuous.config.AppConfig;
 import africa.semicolon.promiscuous.dto.reponse.*;
 import africa.semicolon.promiscuous.dto.request.*;
 import africa.semicolon.promiscuous.enums.ExceptionMessage;
+import africa.semicolon.promiscuous.enums.Interest;
 import africa.semicolon.promiscuous.exception.AccountActivationFailedException;
 import africa.semicolon.promiscuous.exception.BadCredentialException;
 import africa.semicolon.promiscuous.exception.PromiscuousException;
@@ -28,15 +29,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static africa.semicolon.promiscuous.dto.reponse.ResponseMessage.PROFILE_UPDATE_SUCCESSFUL;
 import static africa.semicolon.promiscuous.enums.ExceptionMessage.*;
 import static africa.semicolon.promiscuous.utils.AppUtils.*;
 import static africa.semicolon.promiscuous.utils.JwtUtils.*;
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -139,10 +139,30 @@ public class PromiscusUserService implements UserService{
     @Override
     public UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id) {
         User user = findUserById(id);
-
-        return null;
+        JsonPatch updatePatch = buildUpdatePatch(updateUserRequest);
+        return  applyPatch(updatePatch,user);
     }
 
+    private static Set<Interest>parseInterestFrom(Set<String> interest){
+
+    }
+
+    private UpdateResponse applyPatch(JsonPatch updatePatch,User user){
+        ObjectMapper objectMapper = new ObjectMapper();
+        //1. Convert user to JsonNode
+        JsonNode userNode = objectMapper.convertValue(user, JsonNode.class);
+        try {
+            //2. Apply patch to JsonNode from step 1
+            JsonNode updatedNode = updatePatch.apply(userNode);
+            //3. Convert updatedNode back to user
+            User updatedUser = objectMapper.convertValue(updatedNode, User.class);
+            //4. Save updated User
+            userRepository.save(updatedUser);
+            return  new UpdateResponse(PROFILE_UPDATE_SUCCESSFUL.name());
+        }catch (JsonPatchException exception){
+            throw new PromiscuousException(exception.getMessage());
+        }
+    }
 //    @Override
 //    public UpdateResponse updateUserProfile(JsonPatch jsonPatch, Long id) {
 //        ObjectMapper mapper = new ObjectMapper();
@@ -160,40 +180,41 @@ public class PromiscusUserService implements UserService{
 //            throw new PromiscuousException(":(");
 //        }
 //    }
+private JsonPatch buildUpdatePatch(UpdateRequest updateUserRequest) {
+    Field[] fields = updateUserRequest.getClass().getDeclaredFields();
 
+    List<ReplaceOperation> operations = Arrays.stream(fields)
+            .filter(field -> isFieldWithValue(updateUserRequest, field))
+            .map(field->buildReplaceOperation(updateUserRequest, field))
+            .toList();
 
-    private JsonPatch buildUpdatePatch(UpdateRequest updateRequest) {
-      Field [] fields = updateRequest.getClass().getDeclaredFields();
+    List<JsonPatchOperation> patchOperations = new ArrayList<>(operations);
+    return new JsonPatch(patchOperations);
 
-    List<Field>fieldToUpdate =    Arrays.stream(fields)
-                .filter(field -> field!=null)
-                .toList();
+}
 
-    List<JsonPatchOperation>operations = new ArrayList<>();
-       fieldToUpdate.forEach(field -> {
-           try{
-               String path ="/"+field.getName();
-               JsonPointer pointer = new JsonPointer(path);
-               String value = field.get(field.getName().toString());
-               TextNode node = new TextNode(value);
-               ReplaceOperation operation = new ReplaceOperation(pointer,node);
-               operations.add(operation);
+    private static  ReplaceOperation buildReplaceOperation(UpdateRequest updateUserRequest, Field field) {
+        field.setAccessible(true);
+        try {
+            String path = JSON_PATCH_PATH_PREFIX + field.getName();
+            JsonPointer pointer = new JsonPointer(path);
+            String value = field.get(updateUserRequest).toString();
+            TextNode node = new TextNode(value);
+            ReplaceOperation operation = new ReplaceOperation(pointer, node);
+            return operation;
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
-
-           }
-
-
-        ("/"+field.getName());
-
-       }
-    });
-
-        try{
-            JsonPatch patch = new JsonPatch(operations)
-        } catch (JsonPointerException exception){
-
-      }
-
+    private static boolean isFieldWithValue(UpdateRequest updateRequest,Field field){
+    try {
+        field.setAccessible(true);
+        return field.get(updateRequest) != null;
+    } catch (IllegalAccessException e) {
+        throw new RuntimeException(e);
+    }
+}
 //    }
 
     private User findUserById( Long id) {

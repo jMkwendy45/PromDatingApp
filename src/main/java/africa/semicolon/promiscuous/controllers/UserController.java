@@ -29,7 +29,7 @@ public class UserController {
     }
     @PostMapping("/{id}")
     public ResponseEntity<?>updateUserAccount(@RequestBody JsonPatch jsonPatch,@PathVariable Long id){
-        UpdateResponse response = userService.updateUserProfile(jsonPatch,id);
+        UpdateResponse response = userService.updateProfile(jsonPatch,id);
                 return ResponseEntity.ok(response);
     }
 

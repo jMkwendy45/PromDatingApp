@@ -21,8 +21,8 @@ public interface UserService {
    LoginResponse login(LoginRequest loginRequest );
 
     List<GetUserResponse> getAllUsers(int page, int pageSize);
-
-    UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id);
+     UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id);
+//    UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id);
 //   UpdateResponse updateUserProfile (JsonPatch jsonPatch, Long id);
 
 
