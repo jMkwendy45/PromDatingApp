@@ -117,18 +117,18 @@ public class UserServiceTest {
     public void testThatUserCanUpdateAccount(){
         UpdateRequest updateUserRequest = buildUpdateRequest();
 
-        UpdateResponse response = userService.updateProfile(updateUserRequest, 500L);
+            UpdateResponse response = userService.updateProfile(updateUserRequest, 500L);
 
-        assertThat(response).isNotNull();
-        GetUserResponse userResponse = userService.getUserId(500L);
+            assertThat(response).isNotNull();
+            GetUserResponse userResponse = userService.getUserId(500L);
 
-        String fullName = userResponse.getFullName();
-        String expectedFullName = new StringBuilder()
-                .append(updateUserRequest.getFirstName())
-                .append(BLANK_SPACE)
-                .append(updateUserRequest.getLastName()).toString();
+            String fullName = userResponse.getFullName();
+            String expectedFullName = new StringBuilder()
+                    .append(updateUserRequest.getFirstName())
+                    .append(BLANK_SPACE)
+                    .append(updateUserRequest.getLastName()).toString();
 
-        assertThat(fullName).isEqualTo(expectedFullName);
+            assertThat(fullName).isEqualTo(expectedFullName);
 
     }
 
@@ -143,6 +143,25 @@ public class UserServiceTest {
         updateUserRequest.setInterest(interests);
         return updateUserRequest;
     }
+
+
+//        private MultipartFile getTestImage(){
+//            //obtain a path that points to the image
+//            Path path = Paths.get("C:\\Users\\USER\\Desktop\\SPRINGBOOT\\promiscuous\\src\\test\\resources\\images\\airplane_cartoon.png");
+//            //create stream that can read bytes from file pointed to by path
+//            try (var inputStream = Files.newInputStream(path)){
+//                //create a multipartFile using bytes from the inputStream obtained from the path
+//                MultipartFile image = new MockMultipartFile("test_image",inputStream);
+//                return image;
+//            } catch (Exception exception){
+//                throw new PromiscuousException(exception.getMessage());
+//            }
+//        }
+
+
+
+
+
 
     private MultipartFile getTestImage(){
         //obtain a path that points to the image

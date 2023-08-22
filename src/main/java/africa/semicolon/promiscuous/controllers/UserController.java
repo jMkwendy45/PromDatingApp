@@ -27,11 +27,11 @@ public class UserController {
         GetUserResponse user =userService.getUserId(id);
                 return ResponseEntity.ok().body(user);
     }
-    @PostMapping("/{id}")
-    public ResponseEntity<?>updateUserAccount(@RequestBody JsonPatch jsonPatch,@PathVariable Long id){
-        UpdateResponse response = userService.updateProfile(jsonPatch,id);
-                return ResponseEntity.ok(response);
-    }
+//    @PostMapping("/{id}")
+//    public ResponseEntity<?>updateUserAccount(@RequestBody JsonPatch jsonPatch,@PathVariable Long id){
+//        UpdateResponse response = userService.updateProfile(jsonPatch,id);
+//                return ResponseEntity.ok(response);
+//    }
 
 }
 

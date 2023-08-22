@@ -139,6 +139,9 @@ public class PromiscusUserService implements UserService{
     @Override
     public UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id) {
         User user = findUserById(id);
+        Set<String>userInterest = updateUserRequest.getInterest();
+        Set<Interest>interests = parseInterestFrom(userInterest);
+//        user.setInterests();
         JsonPatch updatePatch = buildUpdatePatch(updateUserRequest);
         return  applyPatch(updatePatch,user);
     }
@@ -196,6 +199,18 @@ private JsonPatch buildUpdatePatch(UpdateRequest updateUserRequest) {
     return new JsonPatch(patchOperations);
 
 }
+    private static boolean validateFields(UpdateRequest updateUserRequest, Field field) {
+        List<String> list = List.of("interests","street","houseNumber","country","state");
+        field.setAccessible(true);
+        try {
+            return field.get(updateUserRequest) != null && !list.contains(field.getName());
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
 
     private static  ReplaceOperation buildReplaceOperation(UpdateRequest updateUserRequest, Field field) {
         field.setAccessible(true);
