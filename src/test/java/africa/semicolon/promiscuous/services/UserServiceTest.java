@@ -4,6 +4,7 @@ import africa.semicolon.promiscuous.dto.reponse.*;
 import africa.semicolon.promiscuous.dto.request.LoginRequest;
 import africa.semicolon.promiscuous.dto.request.RegisterUserRequest;
 import africa.semicolon.promiscuous.dto.request.UpdateRequest;
+import africa.semicolon.promiscuous.enums.Interest;
 import africa.semicolon.promiscuous.exception.BadCredentialException;
 import africa.semicolon.promiscuous.exception.PromiscuousException;
 import ch.qos.logback.core.pattern.color.BlackCompositeConverter;
@@ -76,7 +77,6 @@ public class UserServiceTest {
         assertThat(response).isNotNull();
 //        assertThat(response.getEmail()).isEqualTo(registerUserRequest.getEmail());
     }
-
     @Test
     public void getAllUsers() {
 //        registerTestUsers();
@@ -90,15 +90,10 @@ public class UserServiceTest {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test@email.com");
         loginRequest.setPassword("password");
-
-
         LoginResponse response = userService.login(loginRequest);
         assertThat(response).isNotNull();
-
         String accessToken = response.getAccessToken();
         assertThat(accessToken).isNotNull();
-
-
     }
 
     @Test
@@ -132,17 +127,17 @@ public class UserServiceTest {
 //
 //    }
 //
-//    private UpdateRequest buildUpdateRequest() {
-//        Set<String> interests = Set.of("Swimming", "Sports", "Cooking");
-//        UpdateRequest updateUserRequest =  new UpdateRequest();
-//        updateUserRequest.setDateOfBirth(String.valueOf(LocalDate.of(2005, Month.AUGUST.ordinal(), 7)));
-//        updateUserRequest.setFirstName("Sheriff");
-//        updateUserRequest.setLastName("Awofiranye");
-//        MultipartFile testImage = getTestImage();
-//        updateUserRequest.setProfileImage(testImage);
-//        updateUserRequest.setInterest(interests);
-//        return updateUserRequest;
-//    }
+    private UpdateRequest buildUpdateRequest() {
+        Set<String> interests = Set.of("Swimming", "Sports", "Cooking");
+        UpdateRequest updateUserRequest =  new UpdateRequest();
+        updateUserRequest.setDateOfBirth(String.valueOf(LocalDate.of(2005, Month.AUGUST.ordinal(), 7)));
+        updateUserRequest.setFirstName("Sheriff");
+        updateUserRequest.setLastName("Awofiranye");
+        MultipartFile testImage = getTestImage();
+        updateUserRequest.setProfileImage(testImage);
+        updateUserRequest.setInterest(interests);
+        return updateUserRequest;
+    }
 
 
 //        private MultipartFile getTestImage(){
@@ -221,12 +216,12 @@ public class UserServiceTest {
 //    }
 @Test
 public void testThatUserCanUpdateAccount(){
-    UpdateUserRequest updateUserRequest = buildUpdateRequest();
+    UpdateRequest updateUserRequest = buildUpdateRequest();
 
-    UpdateUserResponse response = userService.updateProfile(updateUserRequest, 500L);
+    UpdateResponse response = userService.updateProfile(updateUserRequest, 500L);
 
     assertThat(response).isNotNull();
-    GetUserResponse userResponse = userService.getUserById(500L);
+    GetUserResponse userResponse = userService.getUserId(500L);
 
     String fullName = userResponse.getFullName();
     String expectedFullName = new StringBuilder()
@@ -237,23 +232,6 @@ public void testThatUserCanUpdateAccount(){
     assertThat(fullName).isEqualTo(expectedFullName);
 }
 
-    private UpdateUserRequest buildUpdateRequest() {
-        Set<String> interests = Set.of("Swimming", "Sports", "Cooking");
-//        Set<Interest> interests = Set.of(Interest.SWIMMING,Interest.COOKING,Interest.SPORTS);
-        UpdateUserRequest updateUserRequest =  new UpdateUserRequest();
-        updateUserRequest.setDateOfBirth(LocalDate.of(2005, Month.NOVEMBER.ordinal(),25));
-        updateUserRequest.setFirstName("Sheriff");
-        updateUserRequest.setLastName("Awofiranye");
-        updateUserRequest.setPassword("newPassword");
-        updateUserRequest.setCountry("Nigeria");
-        updateUserRequest.setInterests(interests);
-
-        //TODO: FIX THIS MESS
-//        MultipartFile testImage = getTestImage();
-//        updateUserRequest.setProfileImage(testImage);
-//        updateUserRequest.setInterests(interests);
-        return updateUserRequest;
-    }
 
     private MultipartFile getTestImage(){
         //obtain a path that points to the image
@@ -264,7 +242,7 @@ public void testThatUserCanUpdateAccount(){
             MultipartFile image = new MockMultipartFile("test_image",inputStream);
             return image;
         } catch (Exception exception){
-            throw new PromiscuousBaseException(exception.getMessage());
+            throw new PromiscuousException(exception.getMessage());
         }
     }
 

@@ -27,7 +27,7 @@ public class CloudServiceTest {
         Path path = Paths.get(TEST_EMAIL_LOCATION );
         try(InputStream inputStream = Files.newInputStream(path)){
             MultipartFile file = new MockMultipartFile("testImage",inputStream);
-            ApiResponse<String>response = cloudService.upload
+            ApiResponse<String>response = cloudService.upload()
         }catch (IOException exception){
             throw  new RuntimeException(":(");
         }

@@ -139,7 +139,7 @@ public class PromiscusUserService implements UserService{
     public UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id) {
         ModelMapper modelMapper = new ModelMapper();
         User user = findUserById(id);
-        Set<Interest> userInterests = updateUserRequest.getInterests();
+//        Set<String> userInterests = updateUserRequest.getInterests();
         Set<Interest> interests = parseInterestFrom(userInterests);
         user.setInterests(interests);
         Address userAddress = modelMapper.map(updateUserRequest, Address.class);
@@ -148,7 +148,7 @@ public class PromiscusUserService implements UserService{
         return applyPatch(updatePatch, user);
     }
 
-    private static Set<Interest>parseInterestFrom(Set<Interest> interests){
+    private static Set<Interest>parseInterestFrom(Set<String> interests){
         Set<Interest> userInterests =  interests.stream()
                 .map(interest -> Interest.valueOf(interest.toUpperCase()))
                 .collect(Collectors.toSet());

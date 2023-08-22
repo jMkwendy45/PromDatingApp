@@ -23,9 +23,28 @@ public class AppConfig {
     }
 
 
+    @Value("${cloud.api.secret}")
+    private String cloudSecret;
+
+    @Value("${cloud.api.key}")
+    private String cloudKey;
+
+    @Value("${cloud.api.name}")
+    private String cloudName;
 
 
 
+    public String getCloudSecret() {
+        return cloudSecret;
+    }
+
+    public String getCloudKey() {
+        return cloudKey;
+    }
+
+    public String getCloudName() {
+        return cloudName;
+    }
 
 
 
