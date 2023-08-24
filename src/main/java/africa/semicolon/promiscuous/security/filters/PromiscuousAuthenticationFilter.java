@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
@@ -32,14 +33,14 @@ public class PromiscuousAuthenticationFilter  extends  UsernamePasswordAuthentic
         //2 create an auth Object that is not yet authenticated
         Authentication authentication = new UsernamePasswordAuthenticationToken(email,password);
         //delegate authentication responsiblity of the auth object to the auth manager
-            authenticationManager.authenticate(authentication)
+         Authentication authenticationResult =   authenticationManager.authenticate(authentication);
+         // put the now authenticated object in the securityContext
+            SecurityContextHolder.getContext().setAuthentication(authenticationResult);
+            return authenticationResult;
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
-        return null;
     }
 
     @Override
