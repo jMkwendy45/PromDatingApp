@@ -77,6 +77,7 @@ public class UserServiceTest {
         assertThat(response).isNotNull();
 //        assertThat(response.getEmail()).isEqualTo(registerUserRequest.getEmail());
     }
+
     @Test
     public void getAllUsers() {
 //        registerTestUsers();
@@ -135,7 +136,7 @@ public class UserServiceTest {
         updateUserRequest.setLastName("Awofiranye");
         MultipartFile testImage = getTestImage();
         updateUserRequest.setProfileImage(testImage);
-        updateUserRequest.setInterest(interests);
+        updateUserRequest.setInterests(interests);
         return updateUserRequest;
     }
 
@@ -218,10 +219,10 @@ public class UserServiceTest {
 public void testThatUserCanUpdateAccount(){
     UpdateRequest updateUserRequest = buildUpdateRequest();
 
-    UpdateResponse response = userService.updateProfile(updateUserRequest, 500L);
+    UpdateResponse response = userService.updateProfile(updateUserRequest, 501L);
 
     assertThat(response).isNotNull();
-    GetUserResponse userResponse = userService.getUserId(500L);
+    GetUserResponse userResponse = userService.getUserId(501L);
 
     String fullName = userResponse.getFullName();
     String expectedFullName = new StringBuilder()
@@ -235,7 +236,7 @@ public void testThatUserCanUpdateAccount(){
 
     private MultipartFile getTestImage(){
         //obtain a path that points to the image
-        Path path = Paths.get("C:\\Users\\USER\\Desktop\\SPRINGBOOT\\promiscuous\\src\\test\\resources\\images\\airplane_cartoon.png");
+        Path path = Paths.get("C:\\Users\\USER\\IdeaProjects\\SpringProjects\\promiscuous\\src\\test\\java\\africa\\semicolon\\promiscuous\\resources\\images\\2.jpg");
         //create stream that can read bytes from file pointed to by path
         try (var inputStream = Files.newInputStream(path)){
             //create a multipartFile using bytes from the inputStream obtained from the path

@@ -17,13 +17,13 @@ public class UpdateRequest {
     private String firstName;
     private String password;
     private String gender;
-    private Set<String> interest;
+//    private Set<String> interest;
     private MultipartFile profileImage;
     private String phoneNumber;
     private String houseNumber;
     private String street;
     private String state;
     private String country;
-    private Set<Interest> interests;
+    private Set<String> interests;
 
 }

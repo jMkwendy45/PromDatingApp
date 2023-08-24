@@ -27,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -44,6 +45,8 @@ public class PromiscusUserService implements UserService{
      private  final MailService mailService;
     private  final UserRepository userRepository;
       private final AppConfig appConfig;
+    private final CloudService cloudService;
+
 
 
 
@@ -92,27 +95,27 @@ public class PromiscusUserService implements UserService{
         userRepository.deleteAll();
     }
 
-    @Override
-    public LoginResponse login(LoginRequest loginRequest) {
-        String email = loginRequest.getEmail();
-        String password =loginRequest.getPassword();
+//    @Override
+//    public LoginResponse login(LoginRequest loginRequest) {
+//        String email = loginRequest.getEmail();
+//        String password =loginRequest.getPassword();
+//
+//
+//        Optional<User>foundUser = userRepository.readByEmail(email);
+//        User user = foundUser.orElseThrow(()->new UserNotFoundException(
+//                String.format(USER_WITH_EMAIL_NOT_FOUND_EXCEPTION.getMessage(),email)
+//        ));
+//        boolean isValidPassword = matches(user.getPassword(),password);
+//        if (isValidPassword) return buildLoginResponse(email);
+//        throw  new BadCredentialException(INVALID_CREDENTIAL_EXCEPTION.getMessage());
+//    }
 
-
-        Optional<User>foundUser = userRepository.readByEmail(email);
-        User user = foundUser.orElseThrow(()->new UserNotFoundException(
-                String.format(USER_WITH_EMAIL_NOT_FOUND_EXCEPTION.getMessage(),email)
-        ));
-        boolean isValidPassword = matches(user.getPassword(),password);
-        if (isValidPassword) return buildLoginResponse(email);
-        throw  new BadCredentialException(INVALID_CREDENTIAL_EXCEPTION.getMessage());
-    }
-
-    private static LoginResponse buildLoginResponse(String email) {
-        String accessToken = generateToken(email);
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setAccessToken(accessToken);
-        return loginResponse;
-    }
+//    private static LoginResponse buildLoginResponse(String email) {
+//        String accessToken = generateToken(email);
+//        LoginResponse loginResponse = new LoginResponse();
+//        loginResponse.setAccessToken(accessToken);
+//        return loginResponse;
+//    }
 
     @Override
     public List<GetUserResponse> getAllUsers(int page, int pageSize) {
@@ -137,15 +140,36 @@ public class PromiscusUserService implements UserService{
     }
     @Override
     public UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id) {
+
+
         ModelMapper modelMapper = new ModelMapper();
+        String url =  uploadImage(updateUserRequest.getProfileImage());
+
         User user = findUserById(id);
-//        Set<String> userInterests = updateUserRequest.getInterests();
+
+        Set<String> userInterests = updateUserRequest.getInterests();
         Set<Interest> interests = parseInterestFrom(userInterests);
         user.setInterests(interests);
-        Address userAddress = modelMapper.map(updateUserRequest, Address.class);
+
+        Address userAddress = user.getAddress();
+        modelMapper.map(updateUserRequest, userAddress);
         user.setAddress(userAddress);
         JsonPatch updatePatch = buildUpdatePatch(updateUserRequest);
         return applyPatch(updatePatch, user);
+//        ModelMapper modelMapper = new ModelMapper();
+//        String url =  uploadImage(updateUserRequest.getProfileImage());
+//
+//        User user = findUserById(id);
+//
+//        Set<String> userInterests = updateUserRequest.getInterests();
+//        Set<Interest> interests = parseInterestFrom(userInterests);
+//        user.setInterests(interests);
+//
+//        Address userAddress = user.getAddress();
+//        modelMapper.map(updateUserRequest, userAddress);
+//        user.setAddress(userAddress);
+//        JsonPatch updatePatch = buildUpdatePatch(updateUserRequest);
+//        return applyPatch(updatePatch, user);
     }
 
     private static Set<Interest>parseInterestFrom(Set<String> interests){
@@ -156,11 +180,17 @@ public class PromiscusUserService implements UserService{
         return userInterests;
     }
 
+
+    private String uploadImage(MultipartFile newProfileImage) {
+        boolean isFormWithProfileImage = newProfileImage != null;
+        if(isFormWithProfileImage) return cloudService.upload(newProfileImage);
+        throw new RuntimeException("Image upload failed");
+    }
     private UpdateResponse applyPatch(JsonPatch updatePatch,User user){
         ObjectMapper objectMapper = new ObjectMapper();
         //1. Convert user to JsonNode
         JsonNode userNode = objectMapper.convertValue(user, JsonNode.class);
-        try {
+
             //2. Apply patch to JsonNode from step 1
             JsonNode updatedNode = updatePatch.apply(userNode);
             //3. Convert updatedNode back to user
@@ -168,10 +198,8 @@ public class PromiscusUserService implements UserService{
             //4. Save updated User
             userRepository.save(updatedUser);
             return  new UpdateResponse(PROFILE_UPDATE_SUCCESSFUL.name());
-        }catch (JsonPatchException exception){
-            throw new PromiscuousException(exception.getMessage());
         }
-    }
+
 //    @Override
 //    public UpdateResponse updateUserProfile(JsonPatch jsonPatch, Long id) {
 //        ObjectMapper mapper = new ObjectMapper();

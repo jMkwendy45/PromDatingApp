@@ -10,5 +10,5 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmailNotificationResponse {
-    private String messageID;
+    private String message;
 }

@@ -18,7 +18,7 @@ public interface UserService {
 
     void deleteAll();
 
-   LoginResponse login(LoginRequest loginRequest );
+//   LoginResponse login(LoginRequest loginRequest );
 
     List<GetUserResponse> getAllUsers(int page, int pageSize);
      UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id);

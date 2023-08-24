@@ -16,7 +16,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class CloudinaryService implements CloudService {
     private final AppConfig appConfig;
-
     @Override
     public String upload(MultipartFile file) {
 
