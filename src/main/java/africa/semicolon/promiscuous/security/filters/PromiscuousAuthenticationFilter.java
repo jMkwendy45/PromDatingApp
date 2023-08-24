@@ -1,5 +1,7 @@
 package africa.semicolon.promiscuous.security.filters;
 
+import africa.semicolon.promiscuous.dto.request.LoginRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,9 +16,10 @@ import java.io.InputStream;
 public class PromiscuousAuthenticationFilter  extends  UsernamePasswordAuthenticationFilter  {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
             InputStream inputStream =request.getInputStream();
-
+             objectMapper.readValue(inputStream, LoginRequest.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
