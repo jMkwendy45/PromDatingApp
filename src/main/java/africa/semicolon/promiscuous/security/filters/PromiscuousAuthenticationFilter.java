@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static africa.semicolon.promiscuous.utils.JwtUtils.generateToken;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @AllArgsConstructor
 public class PromiscuousAuthenticationFilter  extends  UsernamePasswordAuthenticationFilter  {
@@ -55,8 +56,9 @@ public class PromiscuousAuthenticationFilter  extends  UsernamePasswordAuthentic
                                             throws IOException, ServletException {
        String email =authResult.getPrincipal().toString();
        String token =   generateToken(email);
-        ApiResponse.builder().data(token);
-        response.setContentType();
+      var apiResponse =  ApiResponse.builder().data(token);
+        response.setContentType(APPLICATION_JSON_VALUE);
+        response.getWriter().print(apiResponse);
 
     }
 }
