@@ -1,5 +1,6 @@
 package africa.semicolon.promiscuous.security.filters;
 
+import africa.semicolon.promiscuous.dto.reponse.ApiResponse;
 import africa.semicolon.promiscuous.dto.request.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -17,6 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import static africa.semicolon.promiscuous.utils.JwtUtils.generateToken;
+
 @AllArgsConstructor
 public class PromiscuousAuthenticationFilter  extends  UsernamePasswordAuthenticationFilter  {
 
@@ -43,9 +47,16 @@ public class PromiscuousAuthenticationFilter  extends  UsernamePasswordAuthentic
             throw new ProviderNotFoundException(e.getMessage());
         }
     }
-
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        super.successfulAuthentication(request, response, chain, authResult);
+    protected void successfulAuthentication(HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            FilterChain chain,
+                                            Authentication authResult)
+                                            throws IOException, ServletException {
+       String email =authResult.getPrincipal().toString();
+       String token =   generateToken(email);
+        ApiResponse.builder().data(token);
+        response.setContentType();
+
     }
 }
