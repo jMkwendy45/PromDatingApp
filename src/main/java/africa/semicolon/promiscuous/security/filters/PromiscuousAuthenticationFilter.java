@@ -9,10 +9,19 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 public class PromiscuousAuthenticationFilter  extends  UsernamePasswordAuthenticationFilter  {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        try {
+            InputStream inputStream =request.getInputStream();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
         return null;
     }
 
