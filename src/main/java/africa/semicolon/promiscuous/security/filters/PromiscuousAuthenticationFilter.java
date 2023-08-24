@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -39,7 +40,7 @@ public class PromiscuousAuthenticationFilter  extends  UsernamePasswordAuthentic
             return authenticationResult;
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ProviderNotFoundException(e.getMessage());
         }
     }
 
