@@ -190,7 +190,7 @@ public class PromiscusUserService implements UserService{
         ObjectMapper objectMapper = new ObjectMapper();
         //1. Convert user to JsonNode
         JsonNode userNode = objectMapper.convertValue(user, JsonNode.class);
-
+        try {
             //2. Apply patch to JsonNode from step 1
             JsonNode updatedNode = updatePatch.apply(userNode);
             //3. Convert updatedNode back to user
@@ -198,8 +198,10 @@ public class PromiscusUserService implements UserService{
             //4. Save updated User
             userRepository.save(updatedUser);
             return  new UpdateResponse(PROFILE_UPDATE_SUCCESSFUL.name());
+        }catch (JsonPatchException exception){
+            throw new PromiscuousException(exception.getMessage());
         }
-
+    }
 //    @Override
 //    public UpdateResponse updateUserProfile(JsonPatch jsonPatch, Long id) {
 //        ObjectMapper mapper = new ObjectMapper();
