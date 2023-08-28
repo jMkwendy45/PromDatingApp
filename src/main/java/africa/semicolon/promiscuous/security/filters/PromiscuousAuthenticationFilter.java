@@ -32,7 +32,7 @@ public class PromiscuousAuthenticationFilter  extends  UsernamePasswordAuthentic
         try {
             //Extract auth credential from the request
             InputStream inputStream =request.getInputStream();
-            //use the object mapper to get requet
+            //use the object mapper to get request
         LoginRequest loginRequest =  objectMapper.readValue(inputStream, LoginRequest.class);
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
@@ -47,7 +47,7 @@ public class PromiscuousAuthenticationFilter  extends  UsernamePasswordAuthentic
         } catch (IOException e) {
             throw new ProviderNotFoundException(e.getMessage());
         }
-    }
+    }   
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
@@ -57,8 +57,7 @@ public class PromiscuousAuthenticationFilter  extends  UsernamePasswordAuthentic
        String email =authResult.getPrincipal().toString();
        String token =   generateToken(email);
       var apiResponse =  ApiResponse.builder().data(token);
-        response.setContentType(APPLICATION_JSON_VALUE);
+      response.setContentType(APPLICATION_JSON_VALUE);
         response.getWriter().print(apiResponse);
-
     }
 }

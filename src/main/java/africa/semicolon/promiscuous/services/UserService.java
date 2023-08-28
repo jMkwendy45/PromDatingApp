@@ -8,6 +8,7 @@ import africa.semicolon.promiscuous.model.User;
 import com.github.fge.jsonpatch.JsonPatch;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
 
@@ -22,6 +23,8 @@ public interface UserService {
 
     List<GetUserResponse> getAllUsers(int page, int pageSize);
      UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id);
+
+    User getUserByUserName(String email);
 //    UpdateResponse updateProfile(UpdateRequest updateUserRequest, Long id);
 //   UpdateResponse updateUserProfile (JsonPatch jsonPatch, Long id);
 

@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 
 import static africa.semicolon.promiscuous.dto.reponse.ResponseMessage.PROFILE_UPDATE_SUCCESSFUL;
 import static africa.semicolon.promiscuous.enums.ExceptionMessage.*;
+import static africa.semicolon.promiscuous.model.Role.CUSTOMER;
 import static africa.semicolon.promiscuous.utils.AppUtils.*;
 import static africa.semicolon.promiscuous.utils.JwtUtils.*;
 
@@ -60,6 +61,7 @@ public class PromiscusUserService implements UserService{
         user.setEmail(email);
         user.setPassword(password);
         user.setAddress(new Address());
+        user.setRole(CUSTOMER);
         //3. save that users profile in the Database
         User savedUser = userRepository.save(user);
         log.info("saved guy-->{}", savedUser);
@@ -170,6 +172,15 @@ public class PromiscusUserService implements UserService{
 //        user.setAddress(userAddress);
 //        JsonPatch updatePatch = buildUpdatePatch(updateUserRequest);
 //        return applyPatch(updatePatch, user);
+    }
+
+    @Override
+    public User getUserByUserName(String email) {
+        return userRepository.readByEmail(email).orElseThrow()(
+                ()->new UserNotFoundException(
+                        String.format(USER_WITH_EMAIL_NOT_FOUND_EXCEPTION.getMessage(),email)
+                ))
+
     }
 
     private static Set<Interest>parseInterestFrom(Set<String> interests){

@@ -1,5 +1,5 @@
 package africa.semicolon.promiscuous.model;
 
 public enum Role {
-    ADMIN,USER
+    ADMIN,USER,CUSTOMER
 }

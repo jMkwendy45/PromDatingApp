@@ -6,9 +6,9 @@ public enum ExceptionMessage {
     USER_REGISTRATION_FAILED_EXCEPTION("User registration failed"),
     ACCOUNT_ACTIVATION_FAILED_EXCEPTION("Account activation was not successful"),
 
-    INVALID_CREDENTIAL_EXCEPTION("Invalid credential");
+    INVALID_CREDENTIAL_EXCEPTION("Invalid credential"),
 
-
+     AUTHENTICATION_NOT_SUPPORT("aunthentication not supported");
     ExceptionMessage(String message){
         this.message = message;
     }
