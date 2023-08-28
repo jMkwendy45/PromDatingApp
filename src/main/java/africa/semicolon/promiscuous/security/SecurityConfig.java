@@ -14,15 +14,14 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 import static africa.semicolon.promiscuous.model.Role.CUSTOMER;
 import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @AllArgsConstructor
 public class SecurityConfig {
     private  final AuthenticationManager authenticationManager;
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -30,18 +29,15 @@ public class SecurityConfig {
                 //...
                 .addFilterAt(new PromiscuousAuthenticationFilter(authenticationManager), BasicAuthenticationFilter.class)
 //                .authorizeHttpRequests(customizer->customizer.anyRequest().permitAll())
+                .sessionManagement(customizer->customizer.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(customizer-> customizer.requestMatchers(POST,"api/v1/user").permitAll()
                 ).authorizeHttpRequests(customize->customize.requestMatchers(POST,"api/vi/user/upoadMedia")
                                 .hasRole(CUSTOMER.name()
                                 )
 
-
-
                         )
 
                 .build();
-
-        return null;
     }
 
 

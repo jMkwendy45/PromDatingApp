@@ -26,6 +26,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,6 +49,8 @@ public class PromiscusUserService implements UserService{
       private final AppConfig appConfig;
     private final CloudService cloudService;
 
+    private final PasswordEncoder passwordEncoder;
+
 
 
 
@@ -59,7 +62,9 @@ public class PromiscusUserService implements UserService{
         //2. create a user profile with the registration details
         User user = new User();
         user.setEmail(email);
-        user.setPassword(password);
+
+        String passwordHash = passwordEncoder.encode(password);
+        user.setPassword(passwordHash);
         user.setAddress(new Address());
         user.setRole(CUSTOMER);
         //3. save that users profile in the Database

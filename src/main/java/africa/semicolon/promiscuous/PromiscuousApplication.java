@@ -2,6 +2,9 @@ package africa.semicolon.promiscuous;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class PromiscuousApplication {
@@ -9,6 +12,11 @@ public class PromiscuousApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(PromiscuousApplication.class, args);
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder(){
+		return new BCryptPasswordEncoder();
 	}
 
 }
