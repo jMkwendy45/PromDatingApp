@@ -13,40 +13,36 @@ import java.util.List;
 import static africa.semicolon.promiscuous.utils.AppUtils.APP_NAME;
 
 public class JwtUtils {
-
     public static String generateVerificationToken(String email){
-        // generate token that has the user's email embedded in it
-        //TODO: Refactor this, remove hardcoded values
-
-        return  JWT.create()
+        String token = JWT.create()
                 .withClaim("user", email)
                 .withIssuer(APP_NAME)
                 .withExpiresAt(Instant.now().plusSeconds(3600))
                 .sign(Algorithm.HMAC512("secret"));
-
+        return token;
     }
 
-    public static String generateAccessToken(List<? extends GrantedAuthority> authorities){
-        // generate token that has the user's email embedded in it
-        //TODO: Refactor this, remove hardcoded values
-
-        return  JWT.create()
-                .withClaim("roles",authorities )
+    public static String generateAccessToken(List<String> authorities){
+        String token = JWT.create()
+                .withClaim("roles", authorities)
                 .withIssuer(APP_NAME)
-                .withExpiresAt(Instant.now().plusSeconds(3600))
+                .withExpiresAt(Instant.now().plusSeconds(3600*24))
                 .sign(Algorithm.HMAC512("secret"));
-
+        return token;
     }
-    public static boolean validateToken(String token){
+
+    public static boolean isValidJwt(String token){
         JWTVerifier verifier = JWT.require(Algorithm.HMAC512("secret"))
                 .withIssuer(APP_NAME)
                 .withClaimPresence("user")
                 .build();
-        return verifier.verify(token) != null;
+        return verifier.verify(token)!=null;
     }
 
     public static String extractEmailFrom(String token){
         var claim = JWT.decode(token).getClaim("user");
         return (String) claim.asMap().get("user");
     }
+
+
 }

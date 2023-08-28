@@ -8,6 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
+import javax.naming.AuthenticationNotSupportedException;
+
 import static africa.semicolon.promiscuous.enums.ExceptionMessage.AUTHENTICATION_NOT_SUPPORT;
 
 @Component
@@ -15,12 +17,14 @@ import static africa.semicolon.promiscuous.enums.ExceptionMessage.AUTHENTICATION
 public class PromiscuosAuthenticationManager  implements  AuthenticationManager {
      private final AuthenticationProvider authenticationProvider;
 
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        if (authenticationProvider.supports(authentication.getClass())) {
-            Authentication aunthecationresult = authenticationProvider.authenticate(authentication);
-            return aunthecationresult;
+        if (authenticationProvider.supports(authentication.getClass())){
+            Authentication authenticationResult = authenticationProvider.authenticate(authentication);
+            return authenticationResult;
         }
-        throw new AuthenticationNotSupported(AUTHENTICATION_NOT_SUPPORT.getMessage());
+        throw new AuthenticationException(AUTHENTICATION_NOT_SUPPORT.getMessage()) {
+        };
     }
-}
+    }

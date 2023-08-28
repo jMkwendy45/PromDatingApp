@@ -28,25 +28,29 @@ public class PromiscusosAuthenticationProvider  implements     AuthenticationPro
    // take the username from the request
     //if the user 1 os found,use password encoder to compare from the request to users
     // if the password match request in aunthenticadted
-    @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String email =authentication.getPrincipal().toString();
-        UserDetails user = userDetailsService.loadUserByUsername(email);
+   @Override
+   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+       // 1. take the username from the request (contained in authentication) and use
+       // the userDetailsService to look for a user from the Db with that username
+       String email = authentication.getPrincipal().toString();
+       UserDetails user = userDetailsService.loadUserByUsername(email);
+       //2. If user from 1 is found, use the PasswordEncoder to compare the password from the
+       //request to the users password from the Db
+       String password = authentication.getCredentials().toString();
+       boolean isValidPasswordMatch = passwordEncoder.matches(password, user.getPassword());
+       //3. If the passwords match, request is authenticated
+       if (isValidPasswordMatch) {
+           Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+           Authentication authenticationResult = new UsernamePasswordAuthenticationToken(email, password, authorities);
+           //return Authentication
+           return  authenticationResult;
+       }
+       //4. else, request isn't authenticated
+       throw new BadCredentialsException(INVALID_CREDENTIAL_EXCEPTION.getMessage());
+   }
 
-        String passwod = authentication.getCredentials().toString();
-      boolean isValidPasswordMatch =  passwordEncoder.matches(passwod,user.getPassword());
-
-      if (isValidPasswordMatch){
-        //return authentication object
-     Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
-     Authentication authenticationResult = new UsernamePasswordAuthenticationToken(email,passwod,authorities);
-     return authenticationResult;
-      }
-      throw  new BadCredentialsException(INVALID_CREDENTIAL_EXCEPTION.getMessage());
-    }
     @Override
     public boolean supports(Class<?> authentication) {
-         return authentication.equals(UsernamePasswordAuthenticationToken.class);
-
+        return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 }

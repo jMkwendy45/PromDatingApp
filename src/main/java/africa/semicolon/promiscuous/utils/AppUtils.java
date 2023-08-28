@@ -75,8 +75,6 @@ public class AppUtils {
 //        return (String) claim.asMap().get("user");
 //    }
 public static List<String>getpublicPath(){
-        return String{"api/user/v1"};
-
+    return List.of("/api/v1/user", "/login");
 }
-
 }

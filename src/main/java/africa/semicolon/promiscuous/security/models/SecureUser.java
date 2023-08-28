@@ -21,7 +21,7 @@ public class SecureUser  implements UserDetails {
        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
       SimpleGrantedAuthority userAuthority = new SimpleGrantedAuthority(role.name());
        authorities.add(userAuthority);
-        return null;
+        return authorities;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class SecureUser  implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
