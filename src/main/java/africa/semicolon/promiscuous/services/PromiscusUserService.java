@@ -176,11 +176,10 @@ public class PromiscusUserService implements UserService{
 
     @Override
     public User getUserByUserName(String email) {
-        return userRepository.readByEmail(email).orElseThrow()(
+        return userRepository.readByEmail(email).orElseThrow(
                 ()->new UserNotFoundException(
                         String.format(USER_WITH_EMAIL_NOT_FOUND_EXCEPTION.getMessage(),email)
-                ))
-
+                ));
     }
 
     private static Set<Interest>parseInterestFrom(Set<String> interests){

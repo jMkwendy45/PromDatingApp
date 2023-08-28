@@ -1,22 +1,14 @@
 package africa.semicolon.promiscuous.utils;
 
 import africa.semicolon.promiscuous.exception.PromiscuousException;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static africa.semicolon.promiscuous.utils.JwtUtils.generateToken;
+import static africa.semicolon.promiscuous.utils.JwtUtils.generateVerificationToken;
 
 public class AppUtils {
 
@@ -32,7 +24,7 @@ public class AppUtils {
     public  static  final  String TEST_EMAIL_LOCATION ="C:\\Users\\USER\\IdeaProjects\\SpringProjects\\promiscuous\\src\\test\\java\\africa\\semicolon\\promiscuous\\resources\\images\\2.jpg";
 
     public static  String generateActivationLink( String baseUrl,String email){
-        String token = generateToken(email);
+        String token = generateVerificationToken(email);
         String activationLink = baseUrl+ACTIVATE_ACCOUNT_PATH+token;
         return activationLink;
     }
