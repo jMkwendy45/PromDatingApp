@@ -4,59 +4,57 @@ import africa.semicolon.promiscuous.dto.reponse.GetUserResponse;
 import africa.semicolon.promiscuous.dto.reponse.RegisterUserResponse;
 import africa.semicolon.promiscuous.dto.reponse.UpdateResponse;
 import africa.semicolon.promiscuous.dto.request.RegisterUserRequest;
+import africa.semicolon.promiscuous.dto.request.UpdateRequest;
+import africa.semicolon.promiscuous.exception.UserNotFoundException;
 import africa.semicolon.promiscuous.services.UserService;
 import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/v1/user")
-public class UserController {
-    private final UserService userService;
+public class UserController { ;
 
-    @PostMapping("")
-    public ResponseEntity<RegisterUserResponse>register(@RequestBody RegisterUserRequest registerUserRequest){
-        RegisterUserResponse response = userService.register(registerUserRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        private final UserService userService;
+
+        @PostMapping
+        public ResponseEntity<RegisterUserResponse> register(@RequestBody RegisterUserRequest registerUserRequest){
+            RegisterUserResponse response = userService.register(registerUserRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        }
+
+        @GetMapping("/{id}")
+        public ResponseEntity<GetUserResponse> getUserById(@PathVariable Long id) throws UserNotFoundException {
+            GetUserResponse user = userService.getUserId(id);
+            return ResponseEntity.ok().body(user);
+        }
+
+        @PutMapping("/{id}")
+        public ResponseEntity<UpdateResponse> updateUserProfile(@ModelAttribute UpdateRequest updateUserRequest, @PathVariable Long id) throws JsonPatchException {
+            UpdateResponse response = userService.updateProfile(updateUserRequest, id);
+            return ResponseEntity.ok(response);
+        }
+//        @PostMapping("/uploadMedia")
+//        public ResponseEntity<UploadMediaResponse> uploadMedia(@ModelAttribute UploadMediaRequest mediaRequest){
+//            MultipartFile mediaToUpload = mediaRequest.getMedia();
+//            UploadMediaResponse response = userService.uploadMedia(mediaToUpload);
+//            return ResponseEntity.ok(response);
+//        }
+//        @PostMapping("/uploadProfilePicture")
+//        public ResponseEntity<UploadMediaResponse> uploadProfilePicture(@ModelAttribute UploadMediaRequest mediaRequest){
+//            MultipartFile mediaToUpload = mediaRequest.getMedia();
+//            UploadMediaResponse response = userService.uploadProfilePicture(mediaToUpload);
+//            return ResponseEntity.ok(response);
+//        }
+//        @PostMapping("/react/{id}")
+//        public ResponseEntity<?> reactToMedia(@RequestBody MediaReactionRequest mediaReactionRequest){
+//            ApiResponse<?> response = userService.reactToMedia(mediaReactionRequest);
+//            return ResponseEntity.ok(response);
+//        }
+
     }
-    @GetMapping("/{id}")
-    public  ResponseEntity<GetUserResponse>getUserById(@PathVariable Long id){
-        GetUserResponse user =userService.getUserId(id);
-                return ResponseEntity.ok().body(user);
-    }
-//    @PostMapping("/{id}")
-//    public ResponseEntity<?>updateUserAccount(@RequestBody JsonPatch jsonPatch,@PathVariable Long id){
-//        UpdateResponse response = userService.updateProfile(jsonPatch,id);
-//                return ResponseEntity.ok(response);
-//    }
-
-}
-
-
-//public class UserController {
-//
-//    private final UserService userService;
-//
-//    @PostMapping
-//    public ResponseEntity<RegisterUserResponse> register(@RequestBody RegisterUserRequest request){
-//        RegisterUserResponse response = userService.register(request);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-//    }
-//
-//    @GetMapping("/findById")
-//    public ResponseEntity<GetUserResponse> getUserById(@RequestBody FindUserRequest request){
-//        long id = request.getId();
-//        GetUserResponse response = userService.getUserById(id);
-//        return ResponseEntity.status(HttpStatus.FOUND).body(response);
-//    }
-//    @GetMapping("/getAllUsers")
-//    public ResponseEntity<List<GetUserResponse>> getAllUser(@RequestBody FindUserRequest request){
-//        int page = request.getPage();
-//        int pageSize = request.getPageSize();
-//        List<GetUserResponse> response = userService.getAllUsers(page,pageSize);
-//        return ResponseEntity.status(HttpStatus.FOUND).body(response);
-//    }
-//}

@@ -24,11 +24,13 @@ public class PromiscusAuthorizationFilter extends OncePerRequestFilter {
     public void authorize(HttpServletRequest request){
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String token =authorizationHeader.substring("Bearer".length());
+
         extractClaimsFrom(token);
     }
 
     private void extractClaimsFrom(String token) {
         DecodedJWT decodedJWT = JWT.decode(token);
         Claim claim = decodedJWT.getClaim("roles");
+        return claim.asMap();
     }
 }
