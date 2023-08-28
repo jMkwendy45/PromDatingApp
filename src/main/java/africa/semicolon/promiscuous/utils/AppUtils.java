@@ -74,9 +74,9 @@ public class AppUtils {
 //        var claim = JWT.decode(token).getClaim("user");
 //        return (String) claim.asMap().get("user");
 //    }
-//public static String [] publicPath(){
-//        return new String[]{"api/user/v1"};
-//
-//}
+public static List<String>  getpublicPath(){
+        return new String{"api/user/v1"};
+
+}
 
 }
