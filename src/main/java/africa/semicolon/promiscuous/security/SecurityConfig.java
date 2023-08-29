@@ -32,7 +32,7 @@ public class SecurityConfig {
 //        var authenticationFilter = new PromiscuousAuthenticationFilter(authenticationManager);
 //        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
 //                .cors(Customizer.withDefaults())
-//                .sessionManagement(c->c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .sessionMaagement(c->c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //                .addFilterBefore(new PromiscusAuthorizationFilter(), PromiscuousAuthenticationFilter.class)
 //                .addFilterAt(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
 //                .authorizeHttpRequests(c->c.requestMatchers(POST, "/api/v1/user","/login")
