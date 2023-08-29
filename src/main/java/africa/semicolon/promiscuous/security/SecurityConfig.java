@@ -29,7 +29,18 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-//        var authenticationFilter = new PromiscuousAuthenticationFilter(authenticationManager);
+        final String[]publicEndpoints={"/api/v1/user","/login"};
+        return httpSecurity
+                .addFilterAt(new PromiscuousAuthenticationFilter(authenticationManager),
+                    UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new PromiscusAuthorizationFilter(),
+                PromiscuousAuthenticationFilter.class)
+                .sessionManagement(customizer->customizer.sessionCreationPolicy(STATELESS))
+                .csrf(c->c.disable())
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(c->c.requestMatchers(POST,publicEndpoints).permitAll())
+                .authorizeHttpRequests(c->c.anyRequest().hasRole(CUSTOMER.name()))
+                .build();
 //        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
 //                .cors(Customizer.withDefaults())
 //                .sessionMaagement(c->c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -42,7 +53,7 @@ public class SecurityConfig {
 //                .authorizeHttpRequests(c->c.anyRequest().authenticated())
 //                .build();
 //    }
-        return null;
+
 
     }
 }
