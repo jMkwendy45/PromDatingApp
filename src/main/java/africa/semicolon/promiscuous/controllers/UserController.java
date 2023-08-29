@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/v1/user")
-public class UserController { ;
+public class UserController {
 
         private final UserService userService;
 
@@ -30,7 +30,7 @@ public class UserController { ;
 
         @GetMapping("/{id}")
         public ResponseEntity<GetUserResponse> getUserById(@PathVariable Long id) throws UserNotFoundException {
-            GetUserResponse user = userService.getUserId(id);
+            GetUserResponse user = userService.getUserById(id);
             return ResponseEntity.ok().body(user);
         }
 

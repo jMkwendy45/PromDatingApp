@@ -25,22 +25,24 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 @AllArgsConstructor
 public class SecurityConfig {
-    private  final  AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        var authenticationFilter = new PromiscuousAuthenticationFilter(authenticationManager);
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
-                .sessionManagement(c->c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new PromiscusAuthorizationFilter(), PromiscuousAuthenticationFilter.class)
-                .addFilterAt(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(c->c.requestMatchers(POST, "/api/v1/user","/login")
-                        .permitAll())
-                .authorizeHttpRequests(c->c.requestMatchers(PUT, "/api/v1/user/**")
-                        .hasRole(CUSTOMER.name()))
-                .authorizeHttpRequests(c->c.anyRequest().authenticated())
-                .build();
-    }
+//        var authenticationFilter = new PromiscuousAuthenticationFilter(authenticationManager);
+//        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+//                .cors(Customizer.withDefaults())
+//                .sessionManagement(c->c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .addFilterBefore(new PromiscusAuthorizationFilter(), PromiscuousAuthenticationFilter.class)
+//                .addFilterAt(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+//                .authorizeHttpRequests(c->c.requestMatchers(POST, "/api/v1/user","/login")
+//                        .permitAll())
+//                .authorizeHttpRequests(c->c.requestMatchers(PUT, "/api/v1/user/**")
+//                        .hasRole(CUSTOMER.name()))
+//                .authorizeHttpRequests(c->c.anyRequest().authenticated())
+//                .build();
+//    }
+        return null;
 
+    }
 }
